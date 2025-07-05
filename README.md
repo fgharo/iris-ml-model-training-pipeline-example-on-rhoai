@@ -1,5 +1,5 @@
-# kubeflow-examples
-This repo is intended to provide an example of training a ml model (in this case the training iris flower data on RandomForestClassifier model) and deploying it to a multi model server (with triton serving runtime) using Red Hat Openshift AI's (RHOAI) DataSciencePipelines.
+# kubeflow-example
+This repo is intended to provide an example of training a ml model (in this case the training iris flower data on RandomForestClassifier model) and deploying it to a multi model server (with triton serving runtime) using Red Hat Openshift AI's (RHOAI) DataSciencePipelines. The implementation uses python and the KubeFlow Pipelines (KFP) SDK to either compile the pipeline to IR or submit it directly to the pipeline server for execution.
 
 ## Assumptions
 1. This example exercise will be ran in RHOAI (at least 2.16).
@@ -129,12 +129,23 @@ You can eliminate the step of having to upload the Intermediate Representation (
         ```
 1. You can confirm the environment variables were updated by executing this terminal command: `cat .env` inside of the `iris-ml-model-training-pipeline-example-on-rhoai` directory.
 1. Comment this block out from `pipelines/iris_training_pipeline.py`:
-```
-if __name__ == "__main__":
-    kfp.compiler.Compiler().compile(iris_pipeline, package_path=__file__.replace(".py", ".yaml"))
-```
+    ```
+    if __name__ == "__main__":
+        kfp.compiler.Compiler().compile(iris_pipeline, package_path=__file__.replace(".py", ".yaml"))
+    ```
+    *Tip: You can comment out a block of lines in the file editor by highlighting the block you want to comment out and then hitting keyboard combo keys Ctrl+/* 
 1. Uncomment lines starting from line 422 til line 456.
+    *Tip: You can uncomment a block of lines in the file editor by highlighting the block you want to uncomment and then hitting keyboard combo keys Ctrl+/* 
+1. Save the file in the editor.
 1. In the terminal execute your python script to submit the pipeline: `python pipelines/iris_training_pipeline.py`
 1. Notice that last URL printed in the output. Click on that url and it should
 take you to a graphical view of your pipeline run.
 1. Once again after all the pipeline tasks are green if you click on the `deploy-model` task and inspect the logs the path should match the inference server path configured in your `triton-multi-model-server`.
+1. Now you have a convenient pipeline to start out with that trains a model, uploads the model to s3 and finally deploys said model to a triton multi model server.
+
+
+## Tips for working with Kubeflow SDK
+* Keep execution of the python script with execution of the individual component functions separate in your mind. The former runs in your notebook, the latter runs on the pipeline server. Each function annotated with @component runs in its own separate container or linux process behind the scenes.
+* Functions annotated with @component do not have access to the surrounding scope. So if you need an import of a particular module make sure you do an inline import in the component function body. If a module is not in the base_image passed to the decorator than either add that module to `packages_to_install` argument or build your own base image with the python modules added.
+* Watch out for functions annotated @pipeline as regular python control flow constructs (if/then, loops, etc) won't compile properly. Prefer kfp dsl constructs (with dsl.If(...), with dsl.ParallelFor(...) as item, etc). If you need to use traditional non-parallel loops nest them in the individual @component decorated functions.
+* For more examples and reference documentation, visit the official Kubeflow Pipelines SDK docs: [link](https://kubeflow-pipelines.readthedocs.io/en/latest/index.html): 
