@@ -1,7 +1,7 @@
 """Example of a pipeline to demonstrate a simple real world data science workflow."""
 
 import os
-
+import json
 import kfp.compiler
 from dotenv import load_dotenv
 from kfp import dsl
@@ -371,6 +371,41 @@ def iris_pipeline(
     deploy_model_task.set_caching_options(False)
     deploy_model_task.after(validate_model_task)
 
+def get_rhods_dashboard_url_from_env():
+    """
+    Returns the RHODS dashboard pipeline URL by parsing the NOTEBOOK_ARGS env variable.
+    Returns None if not found or if the format is invalid.
+    """
+    args = os.environ.get("NOTEBOOK_ARGS", "")
+    for part in args.split():
+        if part.startswith("--ServerApp.tornado_settings="):
+            try:
+                settings_json = part.split("=", 1)[1]
+                tornado_settings = json.loads(settings_json)
+                hub_host = tornado_settings.get("hub_host")
+                if hub_host:
+                    return hub_host.rstrip("/")
+            except Exception:
+                pass  # Fail silently if malformed
+    return None
+
+def get_project_name_from_env():
+    """
+    Returns the data science project name this notebook is under.
+    """
+    args = os.environ.get("NOTEBOOK_ARGS", "")
+    for part in args.split():
+        if part.startswith("--ServerApp.tornado_settings="):
+            try:
+                settings_json = part.split("=", 1)[1]
+                tornado_settings = json.loads(settings_json)
+                hub_prefix = tornado_settings.get("hub_prefix")
+                if hub_prefix:
+                    return hub_prefix.removeprefix("/projects/")
+            except Exception:
+                pass  # Fail silently if malformed
+    return None
+
 if __name__ == "__main__":
     kfp.compiler.Compiler().compile(iris_pipeline, package_path=__file__.replace(".py", ".yaml"))
 
@@ -400,11 +435,22 @@ if __name__ == "__main__":
 #         ssl_ca_cert = sa_ca_cert
 #     else:
 #         ssl_ca_cert = None
-
+#     print()
+#     print()
 #     client = kfp.Client(
 #         host=kubeflow_endpoint,
 #         existing_token=bearer_token,
 #         ssl_ca_cert=ssl_ca_cert,
 #     )
-#     result = client.create_run_from_pipeline_func(iris_pipeline, arguments={}, experiment_name="iris")
+#     experiment_name="IrisExperiment"
+#     rhods_dashboard_url = get_rhods_dashboard_url_from_env()
+#     datascience_project_name = get_project_name_from_env()
+#     result = client.create_run_from_pipeline_func(iris_pipeline, arguments={}, experiment_name=experiment_name)
+#     experiment_id = client.get_experiment(experiment_name=experiment_name,namespace=datascience_project_name).experiment_id
+#     print()
+#     print()
 #     print(f"Starting pipeline run with run_id: {result.run_id}")
+#     if rhods_dashboard_url and datascience_project_name and experiment_id and result.run_id:
+#         print(f"RHODS Dashboard Pipeline Run URL: {rhods_dashboard_url}/experiments/{datascience_project_name}/{experiment_id}/runs/{result.run_id}")
+#     else:
+#         print("Could not determine RHODS dashboard pipeline run URL. Please go to The RedHat Openshift AI Dashboard > Experiments > Experiments and Runs section to find your run.")
