@@ -442,7 +442,7 @@ if __name__ == "__main__":
 #         existing_token=bearer_token,
 #         ssl_ca_cert=ssl_ca_cert,
 #     )
-#     experiment_name="IrisExperiment"
+#     experiment_name="Iris Experiment"
 #     rhods_dashboard_url = get_rhods_dashboard_url_from_env()
 #     datascience_project_name = get_project_name_from_env()
 #     result = client.create_run_from_pipeline_func(iris_pipeline, arguments={}, experiment_name=experiment_name)
