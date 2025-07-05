@@ -34,7 +34,7 @@ Your environment should be all ready to go. Now we can start running the pipelin
 1. After your workbench is started, open it. Allow selected permissions if first time opening it.
 1. Clone this repository into it by clicking on the Git button on the left panel and then clicking on the `Clone a Repository` button. Put the git http url in the form and click `Clone` button like the picture below:
 ![Clone git repo](./images/jupyterlab-git-clone.png)
-1. After the git clone, open the iris-ml-model-training-pipeline-example-on-rhoai/pipelines/iris_training_pipeline.py file and change line 336 to be the name of your particular Data Science Project.
+1. After the git clone, open the iris-ml-model-training-pipeline-example-on-rhoai/pipelines/iris_training_pipeline.py file and change line 336 to be the name of your particular Data Science Project from `fharo-testing`.
 ![Change Data Science Project name in python file.](./images/change-python-file-codeline.png)
 1. Next click on the `Terminal` button on the `Launcher` tab.
 1. In the terminal window that opens up, navigate to the cloned repository. `cd iris-ml-model-training-pipeline-example-on-rhoai`
@@ -137,6 +137,7 @@ You can eliminate the step of having to upload the Intermediate Representation (
 1. Uncomment lines starting from line 422 til line 456.
     *Tip: You can uncomment a block of lines in the file editor by highlighting the block you want to uncomment and then hitting keyboard combo keys Ctrl+/* 
 1. Save the file in the editor.
+1. Make sure the namespace parameter is set to the name of your datascience project your pipeline resources and workbenches are running in. That is modify line 336 frpm `fharo-testing` to the name of your datascience project.
 1. In the terminal execute your python script to submit the pipeline: `python pipelines/iris_training_pipeline.py`
 1. Notice that last URL printed in the output. Click on that url and it should
 take you to a graphical view of your pipeline run.
