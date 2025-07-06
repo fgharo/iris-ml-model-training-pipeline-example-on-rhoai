@@ -38,6 +38,8 @@ Your environment should be all ready to go. Now we can start running the pipelin
 ![Change Data Science Project name in python file.](./images/change-python-file-codeline.png)
 1. Next click on the `Terminal` button on the `Launcher` tab.
 1. In the terminal window that opens up, navigate to the cloned repository. `cd iris-ml-model-training-pipeline-example-on-rhoai`
+1. Make sure python virtual environment is installed pipenv: `pip install pipenv`.
+1. Install python packages required: `pip install --dev`.  
 1. Execute `python pipelines/iris_training_pipeline.py`. Notice a new file under pipelines folder called `iris_training_pipeline.yaml`. 
 1. Right click the yaml file and select download. This will download to your machine.
 ![Download pipeline file](./images/downloading-pipeline-file.png)
