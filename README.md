@@ -142,6 +142,7 @@ You can eliminate the step of having to upload the Intermediate Representation (
 1. Notice that last URL printed in the output. Click on that url and it should
 take you to a graphical view of your pipeline run.
 1. Once again after all the pipeline tasks are green if you click on the `deploy-model` task and inspect the logs the path should match the inference server path configured in your `triton-multi-model-server`.
+1. Once again you can retest the inference endpoint like before by running the `test-iris-model-server-on-triton-modelmesh-servingruntime-via-service.ipynb` notebook in your workbench.
 1. Now you have a convenient pipeline to start out with that trains a model, uploads the model to s3 and finally deploys said model to a triton multi model server.
 
 
