@@ -406,8 +406,8 @@ def get_project_name_from_env():
                 pass  # Fail silently if malformed
     return None
 
-if __name__ == "__main__":
-    kfp.compiler.Compiler().compile(iris_pipeline, package_path=__file__.replace(".py", ".yaml"))
+# if __name__ == "__main__":
+#     kfp.compiler.Compiler().compile(iris_pipeline, package_path=__file__.replace(".py", ".yaml"))
 
 # OPTIONAL
 # Instead of compiling to a Intermediate Representation (IR) yaml pipeline as above,
@@ -419,38 +419,38 @@ if __name__ == "__main__":
 # Note: The environment variables BEARER_TOKEN and KUBEFLOW_ENDPOINT in the .env 
 # file would have to be updated.
 
-# if __name__ == "__main__":
-#     print(f"Connecting to kfp: {kubeflow_endpoint}")
-#     sa_token_path = "/run/secrets/kubernetes.io/serviceaccount/token"  # noqa: S105
-#     if "BEARER_TOKEN" in os.environ:
-#         bearer_token = os.environ["BEARER_TOKEN"]
-#     elif os.path.isfile(sa_token_path):
-#         with open(sa_token_path) as f:
-#             bearer_token = f.read().rstrip()
-#     # Check if the script is running in a k8s pod
-#     # Get the CA from the service account if it is
-#     # Skip the CA if it is not
-#     sa_ca_cert = "/run/secrets/kubernetes.io/serviceaccount/service-ca.crt"
-#     if os.path.isfile(sa_ca_cert) and "svc" in kubeflow_endpoint:
-#         ssl_ca_cert = sa_ca_cert
-#     else:
-#         ssl_ca_cert = None
-#     print()
-#     print()
-#     client = kfp.Client(
-#         host=kubeflow_endpoint,
-#         existing_token=bearer_token,
-#         ssl_ca_cert=ssl_ca_cert,
-#     )
-#     experiment_name="Iris Experiment"
-#     rhods_dashboard_url = get_rhods_dashboard_url_from_env()
-#     datascience_project_name = get_project_name_from_env()
-#     result = client.create_run_from_pipeline_func(iris_pipeline, arguments={}, experiment_name=experiment_name)
-#     experiment_id = client.get_experiment(experiment_name=experiment_name,namespace=datascience_project_name).experiment_id
-#     print()
-#     print()
-#     print(f"Starting pipeline run with run_id: {result.run_id}")
-#     if rhods_dashboard_url and datascience_project_name and experiment_id and result.run_id:
-#         print(f"RHODS Dashboard Pipeline Run URL: {rhods_dashboard_url}/experiments/{datascience_project_name}/{experiment_id}/runs/{result.run_id}")
-#     else:
-#         print("Could not determine RHODS dashboard pipeline run URL. Please go to The RedHat Openshift AI Dashboard > Experiments > Experiments and Runs section to find your run.")
+if __name__ == "__main__":
+    print(f"Connecting to kfp: {kubeflow_endpoint}")
+    sa_token_path = "/run/secrets/kubernetes.io/serviceaccount/token"  # noqa: S105
+    if "BEARER_TOKEN" in os.environ:
+        bearer_token = os.environ["BEARER_TOKEN"]
+    elif os.path.isfile(sa_token_path):
+        with open(sa_token_path) as f:
+            bearer_token = f.read().rstrip()
+    # Check if the script is running in a k8s pod
+    # Get the CA from the service account if it is
+    # Skip the CA if it is not
+    sa_ca_cert = "/run/secrets/kubernetes.io/serviceaccount/service-ca.crt"
+    if os.path.isfile(sa_ca_cert) and "svc" in kubeflow_endpoint:
+        ssl_ca_cert = sa_ca_cert
+    else:
+        ssl_ca_cert = None
+    print()
+    print()
+    client = kfp.Client(
+        host=kubeflow_endpoint,
+        existing_token=bearer_token,
+        ssl_ca_cert=ssl_ca_cert,
+    )
+    experiment_name="Iris Experiment"
+    rhods_dashboard_url = get_rhods_dashboard_url_from_env()
+    datascience_project_name = get_project_name_from_env()
+    result = client.create_run_from_pipeline_func(iris_pipeline, arguments={}, experiment_name=experiment_name)
+    experiment_id = client.get_experiment(experiment_name=experiment_name,namespace=datascience_project_name).experiment_id
+    print()
+    print()
+    print(f"Starting pipeline run with run_id: {result.run_id}")
+    if rhods_dashboard_url and datascience_project_name and experiment_id and result.run_id:
+        print(f"RHODS Dashboard Pipeline Run URL: {rhods_dashboard_url}/experiments/{datascience_project_name}/{experiment_id}/runs/{result.run_id}")
+    else:
+        print("Could not determine RHODS dashboard pipeline run URL. Please go to The RedHat Openshift AI Dashboard > Experiments > Experiments and Runs section to find your run.")
